@@ -1,0 +1,92 @@
+/**
+ * Egg Language Parser
+ * Parses Egg source code into an Abstract Syntax Tree (AST)
+ */
+
+/**
+ * Skips whitespace and comments from the beginning of a string
+ * @param {string} string - The input string
+ * @returns {string} - String with leading whitespace and comments removed
+ */
+function skipSpace(string) {
+  // Match whitespace or comments (# to end of line), zero or more times
+  let match = string.match(/^(\s|#.*)*/);
+  return string.slice(match[0].length);
+}
+
+/**
+ * Parses a single expression from the program string
+ * @param {string} program - The program string to parse
+ * @returns {Object} - Object containing the parsed expression and remaining string
+ */
+function parseExpression(program) {
+  program = skipSpace(program);
+  let match, expr;
+
+  // Parse string literals: "hello world"
+  if ((match = /^"([^"]*)"/.exec(program))) {
+    expr = { type: "value", value: match[1] };
+  }
+  // Parse numbers: 123, 45.67
+  else if ((match = /^\d+(\.\d+)?/.exec(program))) {
+    expr = { type: "value", value: Number(match[0]) };
+  }
+  // Parse words/identifiers: abc, +, if, while
+  else if ((match = /^[^\s(),#"]+/.exec(program))) {
+    expr = { type: "word", name: match[0] };
+  } else {
+    throw new SyntaxError("Unexpected syntax: " + program);
+  }
+
+  return parseApply(expr, program.slice(match[0].length));
+}
+
+/**
+ * Parses function applications: func(arg1, arg2, ...)
+ * @param {Object} expr - The expression that might be applied
+ * @param {string} program - The remaining program string
+ * @returns {Object} - Object containing the parsed expression and remaining string
+ */
+function parseApply(expr, program) {
+  program = skipSpace(program);
+
+  // If next character is not '(', this is not an application
+  if (program[0] != "(") {
+    return { expr: expr, rest: program };
+  }
+
+  // Skip opening parenthesis
+  program = skipSpace(program.slice(1));
+  expr = { type: "apply", operator: expr, args: [] };
+
+  // Parse arguments until we find closing parenthesis
+  while (program[0] != ")") {
+    let arg = parseExpression(program);
+    expr.args.push(arg.expr);
+    program = skipSpace(arg.rest);
+
+    if (program[0] == ",") {
+      program = skipSpace(program.slice(1));
+    } else if (program[0] != ")") {
+      throw new SyntaxError("Expected ',' or ')'");
+    }
+  }
+
+  // Skip closing parenthesis and check for chained applications: func()(args)
+  return parseApply(expr, program.slice(1));
+}
+
+/**
+ * Main parse function - parses a complete Egg program
+ * @param {string} program - The complete program string
+ * @returns {Object} - The Abstract Syntax Tree (AST) for the program
+ */
+function parse(program) {
+  let { expr, rest } = parseExpression(program);
+  if (skipSpace(rest).length > 0) {
+    throw new SyntaxError("Unexpected text after program");
+  }
+  return expr;
+}
+
+module.exports = { parse, skipSpace, parseExpression, parseApply };
