@@ -87,6 +87,27 @@ specialForms.fun = (args, scope) => {
  * set(name, value) - Variable assignment
  * Updates an existing binding, searches outer scopes if necessary
  */
-specialForms.set = (args, scope) => {};
+specialForms.set = (args, scope) => {
+  if (args.length != 2 || args[0].type != "word") {
+    throw new SyntaxError("Incorrect use of set");
+  }
+
+  let name = args[0].name;
+  let value = evaluate(args[1], scope);
+
+  // Search through scope chain to find the binding
+  for (
+    let currentScope = scope;
+    currentScope;
+    currentScope = Object.getPrototypeOf(currentScope)
+  ) {
+    if (Object.hasOwn(currentScope, name)) {
+      currentScope[name] = value;
+      return value;
+    }
+  }
+
+  throw new ReferenceError(`Undefined binding: ${name}`);
+};
 
 module.exports = specialForms;
