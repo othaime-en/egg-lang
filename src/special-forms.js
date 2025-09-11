@@ -55,13 +55,33 @@ specialForms.do = (args, scope) => {
  * define(name, value) - Variable definition
  * Creates a new binding in the current scope
  */
-specialForms.define = (args, scope) => {};
+specialForms.define = (args, scope) => {
+  if (args.length != 2 || args[0].type != "word") {
+    throw new SyntaxError("Incorrect use of define");
+  }
+
+  let value = evaluate(args[1], scope);
+  scope[args[0].name] = value;
+  return value;
+};
 
 /**
  * fun(param1, param2, ..., body) - Function definition
  * Creates a function with the given parameters and body
  */
-specialForms.fun = (args, scope) => {};
+specialForms.fun = (args, scope) => {
+  if (!args.length) {
+    throw new SyntaxError("Functions need a body");
+  }
+
+  let body = args[args.length - 1];
+  let params = args.slice(0, args.length - 1).map((expr) => {
+    if (expr.type != "word") {
+      throw new SyntaxError("Parameter names must be words");
+    }
+    return expr.name;
+  });
+};
 
 /**
  * set(name, value) - Variable assignment
