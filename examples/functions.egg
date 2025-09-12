@@ -1,0 +1,41 @@
+# Function examples in Egg
+
+do(
+  # Define a simple function
+  define(square, fun(x, *(x, x))),
+  
+  # Test the square function
+  print("Square of 5:"),
+  print(square(5)),
+  
+  # Define a more complex function (factorial)
+  define(factorial, fun(n,
+    if(==(n, 0),
+       1,
+       *(n, factorial(-(n, 1)))
+    )
+  )),
+  
+  print("Factorial of 5:"),
+  print(factorial(5)),
+  
+  # Function that returns a function (closure example)
+  define(makeAdder, fun(n,
+    fun(x, +(x, n))
+  )),
+  
+  define(add10, makeAdder(10)),
+  print("Adding 10 to 5:"),
+  print(add10(5)),
+  
+  # Recursive power function
+  define(power, fun(base, exp,
+    if(==(exp, 0),
+       1,
+       *(base, power(base, -(exp, 1)))
+    )
+  )),
+  
+  print("2 to the power of 8:"),
+  print(power(2, 8))
+)
