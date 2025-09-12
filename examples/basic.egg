@@ -1,0 +1,32 @@
+# Basic Egg program demonstrating variables, conditionals, and loops
+
+# Define some variables
+do(
+  define(x, 10),
+  define(y, 5),
+  
+  # Print the values
+  print("x is:"),
+  print(x),
+  print("y is:"),
+  print(y),
+  
+  # Conditional example
+  if(>(x, y),
+     print("x is greater than y"),
+     print("y is greater than or equal to x")
+  ),
+  
+  # Loop example: sum numbers from 1 to 10
+  define(total, 0),
+  define(count, 1),
+  while(<(count, 11),
+    do(
+      define(total, +(total, count)),
+      define(count, +(count, 1))
+    )
+  ),
+  
+  print("Sum of 1 to 10:"),
+  print(total)
+)
