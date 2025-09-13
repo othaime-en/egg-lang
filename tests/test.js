@@ -94,3 +94,31 @@ test("Variable scope", () => {
   `);
   assertEquals(result, 8);
 });
+
+// Control flow tests
+test("If statement - true branch", () => {
+  const result = run("if(true, 42, 0)");
+  assertEquals(result, 42);
+});
+
+test("If statement - false branch", () => {
+  const result = run("if(false, 42, 0)");
+  assertEquals(result, 0);
+});
+
+test("While loop", () => {
+  const result = run(`
+    do(
+      define(sum, 0),
+      define(i, 1),
+      while(<(i, 4),
+        do(
+          define(sum, +(sum, i)),
+          define(i, +(i, 1))
+        )
+      ),
+      sum
+    )
+  `);
+  assertEquals(result, 6); // 1 + 2 + 3
+});
