@@ -47,3 +47,28 @@ test("Parse application", () => {
   assertEquals(ast.operator.name, "+");
   assertEquals(ast.args.length, 2);
 });
+
+// Basic evaluation tests
+test("Evaluate number", () => {
+  const result = run("42");
+  assertEquals(result, 42);
+});
+
+test("Evaluate string", () => {
+  const result = run('"hello"');
+  assertEquals(result, "hello");
+});
+
+test("Basic arithmetic", () => {
+  assertEquals(run("+(1, 2)"), 3);
+  assertEquals(run("-(5, 3)"), 2);
+  assertEquals(run("*(4, 3)"), 12);
+  assertEquals(run("/(8, 2)"), 4);
+});
+
+test("Comparison operators", () => {
+  assertEquals(run(">(5, 3)"), true);
+  assertEquals(run("<(3, 5)"), true);
+  assertEquals(run("==(3, 3)"), true);
+  assertEquals(run("!=(3, 5)"), true);
+});
