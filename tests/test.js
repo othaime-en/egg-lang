@@ -122,3 +122,50 @@ test("While loop", () => {
   `);
   assertEquals(result, 6); // 1 + 2 + 3
 });
+
+// Function tests
+test("Simple function", () => {
+  const result = run(`
+    do(
+      define(square, fun(x, *(x, x))),
+      square(5)
+    )
+  `);
+  assertEquals(result, 25);
+});
+
+test("Function with multiple parameters", () => {
+  const result = run(`
+    do(
+      define(add, fun(a, b, +(a, b))),
+      add(3, 4)
+    )
+  `);
+  assertEquals(result, 7);
+});
+
+test("Recursive function", () => {
+  const result = run(`
+    do(
+      define(factorial, fun(n,
+        if(==(n, 0),
+           1,
+           *(n, factorial(-(n, 1)))
+        )
+      )),
+      factorial(5)
+    )
+  `);
+  assertEquals(result, 120);
+});
+
+test("Closure", () => {
+  const result = run(`
+    do(
+      define(makeAdder, fun(n, fun(x, +(x, n)))),
+      define(add5, makeAdder(5)),
+      add5(10)
+    )
+  `);
+  assertEquals(result, 15);
+});
