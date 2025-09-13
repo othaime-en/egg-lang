@@ -72,3 +72,25 @@ test("Comparison operators", () => {
   assertEquals(run("==(3, 3)"), true);
   assertEquals(run("!=(3, 5)"), true);
 });
+
+// Variable tests
+test("Define and use variable", () => {
+  const result = run(`
+    do(
+      define(x, 10),
+      x
+    )
+  `);
+  assertEquals(result, 10);
+});
+
+test("Variable scope", () => {
+  const result = run(`
+    do(
+      define(x, 5),
+      define(f, fun(y, +(x, y))),
+      f(3)
+    )
+  `);
+  assertEquals(result, 8);
+});
