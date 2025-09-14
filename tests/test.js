@@ -209,3 +209,61 @@ test("Array sum function", () => {
   `);
   assertEquals(result, 10);
 });
+
+// Comment tests
+test("Comments are ignored", () => {
+  const result = run(`
+    # This is a comment
+    do(
+      define(x, 5), # Another comment
+      # Yet another comment
+      +(x, 3)
+    )
+  `);
+  assertEquals(result, 8);
+});
+
+// Set tests
+test("Set existing variable", () => {
+  const result = run(`
+    do(
+      define(x, 5),
+      set(x, 10),
+      x
+    )
+  `);
+  assertEquals(result, 10);
+});
+
+test("Set in nested scope", () => {
+  const result = run(`
+    do(
+      define(x, 5),
+      define(setX, fun(val, set(x, val))),
+      setX(15),
+      x
+    )
+  `);
+  assertEquals(result, 15);
+});
+
+// Error tests
+test("Undefined variable throws error", () => {
+  try {
+    run("undefinedVar");
+    throw new Error("Should have thrown ReferenceError");
+  } catch (error) {
+    assertEquals(error.constructor.name, "ReferenceError");
+  }
+});
+
+test("Set undefined variable throws error", () => {
+  try {
+    run("set(undefinedVar, 5)");
+    throw new Error("Should have thrown ReferenceError");
+  } catch (error) {
+    assertEquals(error.constructor.name, "ReferenceError");
+  }
+});
+
+console.log("\nAll tests completed!");
