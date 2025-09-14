@@ -10,7 +10,9 @@
     "test": "node tests/test.js",
     "start": "node src/egg.js",
     "repl": "node src/egg.js --repl",
-    "basic": "node src/egg.js examples/basic.egg"
+    "example-basic": "node src/egg.js examples/basic.egg",
+    "example-functions": "node src/egg.js examples/functions.egg",
+    "example-arrays": "node src/egg.js examples/arrays.egg"
   },
   "keywords": [
     "programming-language",
