@@ -1,21 +1,26 @@
 # THE EGG PROGRAMMING LANGUAGE
 
-## TODO List
+This is a simple programming language implementation based on the guide from [Eloquent JavaScript Chapter 12](https://eloquentjavascript.net/12_language.html). The book provides a basic level implementation. I've managed to a add on a few more features.
 
-### SRC folder
+## Features
 
-1. Create a parser
-2. Create an evaluator
-3. Create a special-forms file for language constructs
-4. An environment file
-5. Main module for the egg programming language
+- **Functions**: First-class functions with closures
+- **Control Flow**: `if` conditionals and `while` loops
+- **Variables**: Variable definition and assignment
+- **Arrays**: Built-in array support
+
+## Installation
+
+Clone this repository and install dependencies:
+
+```bash
+git clone https://github.com/othaime-en/egg-language.git
+cd egg-language
+npm install
+```
 
 ### Example usage
 
-Have several files to show different examples for using the language
-
 ### Tests
-
-Have a folder for the different tests to run on the finished build
 
 ### A setup script
