@@ -169,3 +169,43 @@ test("Closure", () => {
   `);
   assertEquals(result, 15);
 });
+
+// Array tests
+test("Create array", () => {
+  const result = run("array(1, 2, 3)");
+  assertEquals(Array.isArray(result), true);
+  assertEquals(result.length, 3);
+  assertEquals(result[0], 1);
+});
+
+test("Array length", () => {
+  const result = run("length(array(1, 2, 3, 4))");
+  assertEquals(result, 4);
+});
+
+test("Array element access", () => {
+  const result = run("element(array(10, 20, 30), 1)");
+  assertEquals(result, 20);
+});
+
+test("Array sum function", () => {
+  const result = run(`
+    do(
+      define(sum, fun(arr,
+        do(
+          define(i, 0),
+          define(total, 0),
+          while(<(i, length(arr)),
+            do(
+              define(total, +(total, element(arr, i))),
+              define(i, +(i, 1))
+            )
+          ),
+          total
+        )
+      )),
+      sum(array(1, 2, 3, 4))
+    )
+  `);
+  assertEquals(result, 10);
+});
