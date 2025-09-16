@@ -48,6 +48,14 @@ chmod +x setup.sh
 setup.bat
 ```
 
+#### Option 3: Clone from Repository
+
+```bash
+git clone https://github.com/othaime-en/egg-lang
+cd egg-lang
+npm install  # If you have package dependencies
+```
+
 ### Example usage
 
 ### Tests
