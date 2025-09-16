@@ -3,7 +3,8 @@
  * Special syntax constructs that don't follow normal function evaluation rules
  */
 
-const { evaluate } = require("./evaluator");
+// We'll receive the evaluate function to avoid circular dependency
+let evaluate;
 
 // Container for all special forms
 const specialForms = Object.create(null);
@@ -81,6 +82,18 @@ specialForms.fun = (args, scope) => {
     }
     return expr.name;
   });
+
+  return function (...args) {
+    if (args.length != params.length) {
+      throw new TypeError("Wrong number of arguments");
+    }
+
+    let localScope = Object.create(scope);
+    for (let i = 0; i < args.length; i++) {
+      localScope[params[i]] = args[i];
+    }
+    return evaluate(body, localScope);
+  };
 };
 
 /**
@@ -110,4 +123,12 @@ specialForms.set = (args, scope) => {
   throw new ReferenceError(`Undefined binding: ${name}`);
 };
 
-module.exports = specialForms;
+/**
+ * Sets the evaluate function (used to avoid circular dependency)
+ * @param {Function} evaluateFunction - The evaluate function
+ */
+function setEvaluate(evaluateFunction) {
+  evaluate = evaluateFunction;
+}
+
+module.exports = { specialForms, setEvaluate };

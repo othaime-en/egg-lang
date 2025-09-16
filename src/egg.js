@@ -4,10 +4,15 @@
  */
 
 const { parse } = require("./parser");
-const { evaluate } = require("./evaluator");
+const { evaluate, setSpecialForms } = require("./evaluator");
+const { specialForms, setEvaluate } = require("./special-forms");
 const { topScope } = require("./environment");
 const fs = require("fs");
 const path = require("path");
+
+// Wire up the circular dependencies
+setEvaluate(evaluate);
+setSpecialForms(specialForms);
 
 /**
  * Runs an Egg program string
@@ -104,4 +109,12 @@ if (require.main === module) {
   }
 }
 
-module.exports = { run, runFile, startREPL, parse, evaluate, topScope };
+module.exports = {
+  run,
+  runFile,
+  startREPL,
+  parse,
+  evaluate,
+  topScope,
+  specialForms,
+};
