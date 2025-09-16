@@ -3,8 +3,8 @@
  * Executes the Abstract Syntax Tree (AST) produced by the parser
  */
 
-// Import special forms (will be defined in special-forms.js)
-const specialForms = require("./special-forms");
+// Special forms will be injected to avoid circular dependency
+let specialForms = {};
 
 /**
  * Evaluates an expression in the given scope
@@ -13,12 +13,12 @@ const specialForms = require("./special-forms");
  * @returns {*} - The result of evaluating the expression
  */
 function evaluate(expr, scope) {
-  // Handle literal values (numbers, strings) here
+  // Handle literal values (numbers, strings)
   if (expr.type == "value") {
     return expr.value;
   }
 
-  // Handle variable references (words/identifiers) here
+  // Handle variable references (words/identifiers)
   else if (expr.type == "word") {
     if (expr.name in scope) {
       return scope[expr.name];
@@ -27,7 +27,7 @@ function evaluate(expr, scope) {
     }
   }
 
-  // Handle function applications and special forms here
+  // Handle function applications and special forms
   else if (expr.type == "apply") {
     let { operator, args } = expr;
 
@@ -46,4 +46,12 @@ function evaluate(expr, scope) {
   }
 }
 
-module.exports = { evaluate };
+/**
+ * Sets the special forms object (used to avoid circular dependency)
+ * @param {Object} forms - The special forms object
+ */
+function setSpecialForms(forms) {
+  specialForms = forms;
+}
+
+module.exports = { evaluate, setSpecialForms };
