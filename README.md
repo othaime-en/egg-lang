@@ -11,12 +11,41 @@ This is a simple programming language implementation based on the guide from [El
 
 ## Installation
 
-Clone this repository and install dependencies:
+### Prerequisites
+
+- Node.js (version 12 or higher)
+
+### Setup Instructions
+
+#### Option 1: Manual Setup
+
+1. Create the project directory structure:
+
+```
+egg-language/
+├── src/
+├── examples/
+└── tests/
+```
+
+2. Copy all the provided files into their respective directories
+3. Navigate to the project directory: `cd egg-language`
+
+#### Option 2: Using Setup Scripts
+
+**On Unix/Linux/macOS:**
 
 ```bash
-git clone https://github.com/othaime-en/egg-language.git
-cd egg-language
-npm install
+# Make setup script executable and run it
+chmod +x setup.sh
+./setup.sh
+```
+
+**On Windows:**
+
+```cmd
+# Run the Windows setup script
+setup.bat
 ```
 
 ### Example usage
