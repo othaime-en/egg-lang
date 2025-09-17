@@ -53,11 +53,50 @@ setup.bat
 ```bash
 git clone https://github.com/othaime-en/egg-lang
 cd egg-lang
-npm install  # If you have package dependencies
+npm install
 ```
 
-### Example usage
+## Usage
 
-### Tests
+### Running Programs
 
-### A setup script
+**All Platforms:**
+Run an Egg program from a file:
+
+```bash
+# Using npm script
+npm start examples/basic.egg
+
+# Using Node directly
+node src/egg.js examples/basic.egg
+```
+
+**Windows Command Prompt:**
+
+```cmd
+node src\egg.js examples\basic.egg
+```
+
+**PowerShell (Windows):**
+
+```powershell
+node src/egg.js examples/basic.egg
+```
+
+### Interactive REPL
+
+Start the interactive shell:
+
+```bash
+npm run repl
+# or
+node src/egg.js --repl
+```
+
+### Running Tests
+
+Execute the test suite:
+
+```bash
+npm test
+```
