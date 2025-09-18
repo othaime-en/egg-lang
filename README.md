@@ -100,3 +100,62 @@ Execute the test suite:
 ```bash
 npm test
 ```
+
+## Language Syntax
+
+### Basic Values
+
+```egg
+42          # Numbers
+"hello"     # Strings
+true        # Boolean true
+false       # Boolean false
+```
+
+### Variables
+
+```egg
+define(x, 10)           # Define a variable
+set(x, 20)             # Update existing variable
+```
+
+### Functions
+
+```egg
+# Simple function
+define(square, fun(x, *(x, x)))
+square(5)  # Returns 25
+
+# Multiple parameters
+define(add, fun(a, b, +(a, b)))
+
+# Recursive functions
+define(factorial, fun(n,
+  if(==(n, 0),
+     1,
+     *(n, factorial(-(n, 1)))
+  )
+))
+```
+
+### Control Flow
+
+```egg
+# Conditional
+if(>(x, 5), print("big"), print("small"))
+
+# Loop
+while(<(i, 10),
+  do(
+    print(i),
+    define(i, +(i, 1))
+  )
+)
+
+# Sequential execution
+do(
+  define(x, 5),
+  define(y, 10),
+  +(x, y)
+)
+```
