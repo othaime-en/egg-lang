@@ -220,6 +220,50 @@ topScope.find = (array, callback) => {
   return array.find(callback);
 };
 
+topScope.filter = (array, callback) => {
+  if (!Array.isArray(array)) {
+    throw new TypeError("filter() requires an array as first argument");
+  }
+  if (typeof callback !== "function") {
+    throw new TypeError("filter() requires a function as second argument");
+  }
+  return array.filter(callback);
+};
+
+topScope.map = (array, callback) => {
+  if (!Array.isArray(array)) {
+    throw new TypeError("map() requires an array as first argument");
+  }
+  if (typeof callback !== "function") {
+    throw new TypeError("map() requires a function as second argument");
+  }
+  return array.map(callback);
+};
+
+topScope.reduce = (array, callback, initialValue) => {
+  if (!Array.isArray(array)) {
+    throw new TypeError("reduce() requires an array as first argument");
+  }
+  if (typeof callback !== "function") {
+    throw new TypeError("reduce() requires a function as second argument");
+  }
+  if (initialValue === undefined) {
+    return array.reduce(callback);
+  }
+  return array.reduce(callback, initialValue);
+};
+
+topScope.forEach = (array, callback) => {
+  if (!Array.isArray(array)) {
+    throw new TypeError("forEach() requires an array as first argument");
+  }
+  if (typeof callback !== "function") {
+    throw new TypeError("forEach() requires a function as second argument");
+  }
+  array.forEach(callback);
+  return array; // Return array for chaining
+};
+
 // Additional utility functions
 topScope.type = (value) => {
   if (Array.isArray(value)) return "array";
