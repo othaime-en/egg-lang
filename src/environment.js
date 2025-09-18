@@ -96,6 +96,50 @@ topScope.toUpperCase = (str) => {
   return str.toUpperCase();
 };
 
+topScope.trim = (str) => {
+  if (typeof str !== "string") {
+    throw new TypeError("trim() requires a string argument");
+  }
+  return str.trim();
+};
+
+topScope.split = (str, separator, limit) => {
+  if (typeof str !== "string") {
+    throw new TypeError("split() requires a string as first argument");
+  }
+  if (limit === undefined) return str.split(separator);
+  return str.split(separator, limit);
+};
+
+topScope.replace = (str, searchValue, replaceValue) => {
+  if (typeof str !== "string") {
+    throw new TypeError("replace() requires a string as first argument");
+  }
+  return str.replace(searchValue, replaceValue);
+};
+
+topScope.startsWith = (str, searchString, position) => {
+  if (typeof str !== "string" || typeof searchString !== "string") {
+    throw new TypeError("startsWith() requires string arguments");
+  }
+  return str.startsWith(searchString, position || 0);
+};
+
+topScope.endsWith = (str, searchString, length) => {
+  if (typeof str !== "string" || typeof searchString !== "string") {
+    throw new TypeError("endsWith() requires string arguments");
+  }
+  if (length === undefined) return str.endsWith(searchString);
+  return str.endsWith(searchString, length);
+};
+
+topScope.repeat = (str, count) => {
+  if (typeof str !== "string") {
+    throw new TypeError("repeat() requires a string as first argument");
+  }
+  return str.repeat(count);
+};
+
 // Additional utility functions
 topScope.type = (value) => {
   if (Array.isArray(value)) return "array";
