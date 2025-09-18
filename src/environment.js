@@ -186,6 +186,40 @@ topScope.join = (array, separator) => {
   return array.join(separator === undefined ? "," : separator);
 };
 
+topScope.reverse = (array) => {
+  if (!Array.isArray(array)) {
+    throw new TypeError("reverse() requires an array");
+  }
+  return array.reverse();
+};
+
+topScope.sort = (array, compareFn) => {
+  if (!Array.isArray(array)) {
+    throw new TypeError("sort() requires an array as first argument");
+  }
+  if (compareFn === undefined) {
+    return array.sort();
+  }
+  return array.sort(compareFn);
+};
+
+topScope.includes = (array, searchElement, fromIndex) => {
+  if (!Array.isArray(array)) {
+    throw new TypeError("includes() requires an array as first argument");
+  }
+  return array.includes(searchElement, fromIndex || 0);
+};
+
+topScope.find = (array, callback) => {
+  if (!Array.isArray(array)) {
+    throw new TypeError("find() requires an array as first argument");
+  }
+  if (typeof callback !== "function") {
+    throw new TypeError("find() requires a function as second argument");
+  }
+  return array.find(callback);
+};
+
 // Additional utility functions
 topScope.type = (value) => {
   if (Array.isArray(value)) return "array";
