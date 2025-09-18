@@ -140,6 +140,52 @@ topScope.repeat = (str, count) => {
   return str.repeat(count);
 };
 
+// Enhanced array operations
+topScope.push = (array, ...elements) => {
+  if (!Array.isArray(array)) {
+    throw new TypeError("push() requires an array as first argument");
+  }
+  array.push(...elements);
+  return array.length;
+};
+
+topScope.pop = (array) => {
+  if (!Array.isArray(array)) {
+    throw new TypeError("pop() requires an array");
+  }
+  return array.pop();
+};
+
+topScope.shift = (array) => {
+  if (!Array.isArray(array)) {
+    throw new TypeError("shift() requires an array");
+  }
+  return array.shift();
+};
+
+topScope.unshift = (array, ...elements) => {
+  if (!Array.isArray(array)) {
+    throw new TypeError("unshift() requires an array as first argument");
+  }
+  array.unshift(...elements);
+  return array.length;
+};
+
+topScope.slice = (array, start, end) => {
+  if (!Array.isArray(array)) {
+    throw new TypeError("slice() requires an array as first argument");
+  }
+  if (end === undefined) return array.slice(start);
+  return array.slice(start, end);
+};
+
+topScope.join = (array, separator) => {
+  if (!Array.isArray(array)) {
+    throw new TypeError("join() requires an array as first argument");
+  }
+  return array.join(separator === undefined ? "," : separator);
+};
+
 // Additional utility functions
 topScope.type = (value) => {
   if (Array.isArray(value)) return "array";
