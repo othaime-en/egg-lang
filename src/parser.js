@@ -60,14 +60,17 @@ class SourcePosition {
 }
 
 /**
- * Skips whitespace and comments from the beginning of a string
- * @param {string} string - The input string
- * @returns {string} - String with leading whitespace and comments removed
+ * Skips whitespace and comments from the current position
+ * @param {SourcePosition} pos - The source position tracker
  */
-function skipSpace(string) {
-  // Match whitespace or comments (# to end of line), zero or more times
-  let match = string.match(/^(\s|#.*)*/);
-  return string.slice(match[0].length);
+function skipSpace(pos) {
+  while (true) {
+    const remaining = pos.remaining();
+    // Match whitespace or comments (# to end of line)
+    const match = remaining.match(/^(\s|#[^\n]*)*/);
+    if (match[0].length === 0) break;
+    pos.advance(match[0].length);
+  }
 }
 
 /**
