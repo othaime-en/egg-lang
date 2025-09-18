@@ -4,6 +4,62 @@
  */
 
 /**
+ * Enhanced error class with position information
+ */
+class EggSyntaxError extends SyntaxError {
+  constructor(message, line = 1, column = 1) {
+    super(`${message} at line ${line}, column ${column}`);
+    this.line = line;
+    this.column = column;
+    this.name = "EggSyntaxError";
+  }
+}
+
+/**
+ * Tracks position in source code for better error reporting
+ */
+class SourcePosition {
+  constructor(source) {
+    this.source = source;
+    this.pos = 0;
+    this.line = 1;
+    this.column = 1;
+  }
+
+  peek() {
+    return this.source[this.pos] || "";
+  }
+
+  advance(count = 1) {
+    for (let i = 0; i < count && this.pos < this.source.length; i++) {
+      if (this.source[this.pos] === "\n") {
+        this.line++;
+        this.column = 1;
+      } else {
+        this.column++;
+      }
+      this.pos++;
+    }
+  }
+
+  remaining() {
+    return this.source.slice(this.pos);
+  }
+
+  slice(start, end) {
+    return this.source.slice(start, end);
+  }
+
+  clone() {
+    const clone = new SourcePosition(this.source);
+    clone.pos = this.pos;
+    clone.line = this.line;
+    clone.column = this.column;
+    return clone;
+  }
+}
+
+/**
  * Skips whitespace and comments from the beginning of a string
  * @param {string} string - The input string
  * @returns {string} - String with leading whitespace and comments removed
