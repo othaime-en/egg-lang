@@ -127,36 +127,53 @@ function parseExpression(pos) {
 /**
  * Parses function applications: func(arg1, arg2, ...)
  * @param {Object} expr - The expression that might be applied
- * @param {string} program - The remaining program string
- * @returns {Object} - Object containing the parsed expression and remaining string
+ * @param {SourcePosition} pos - The source position tracker
+ * @returns {Object} - The parsed expression
  */
-function parseApply(expr, program) {
-  program = skipSpace(program);
+function parseApply(expr, pos) {
+  skipSpace(pos);
 
   // If next character is not '(', this is not an application
-  if (program[0] != "(") {
-    return { expr: expr, rest: program };
+  if (pos.peek() !== "(") {
+    return expr;
   }
 
   // Skip opening parenthesis
-  program = skipSpace(program.slice(1));
-  expr = { type: "apply", operator: expr, args: [] };
+  pos.advance(1);
+  skipSpace(pos);
+  const applyExpr = {
+    type: "apply",
+    operator: expr,
+    args: [],
+    line: expr.line,
+    column: expr.column,
+  };
 
   // Parse arguments until we find closing parenthesis
-  while (program[0] != ")") {
-    let arg = parseExpression(program);
-    expr.args.push(arg.expr);
-    program = skipSpace(arg.rest);
+  while (pos.peek() !== ")") {
+    if (pos.peek() === "") {
+      throw new EggSyntaxError(
+        "Unexpected end of input, expected ')'",
+        pos.line,
+        pos.column
+      );
+    }
 
-    if (program[0] == ",") {
-      program = skipSpace(program.slice(1));
-    } else if (program[0] != ")") {
-      throw new SyntaxError("Expected ',' or ')'");
+    let arg = parseExpression(pos);
+    applyExpr.args.push(arg);
+    skipSpace(pos);
+
+    if (pos.peek() === ",") {
+      pos.advance(1);
+      skipSpace(pos);
+    } else if (pos.peek() !== ")") {
+      throw new EggSyntaxError("Expected ',' or ')'", pos.line, pos.column);
     }
   }
 
   // Skip closing parenthesis and check for chained applications: func()(args)
-  return parseApply(expr, program.slice(1));
+  pos.advance(1);
+  return parseApply(applyExpr, pos);
 }
 
 /**
