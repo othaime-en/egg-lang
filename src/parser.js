@@ -74,30 +74,54 @@ function skipSpace(pos) {
 }
 
 /**
- * Parses a single expression from the program string
- * @param {string} program - The program string to parse
- * @returns {Object} - Object containing the parsed expression and remaining string
+ * Parses a single expression from the program
+ * @param {SourcePosition} pos - The source position tracker
+ * @returns {Object} - The parsed expression with position info
  */
-function parseExpression(program) {
-  program = skipSpace(program);
+function parseExpression(pos) {
+  skipSpace(pos);
   let match, expr;
+  const startPos = pos.clone();
+  const remaining = pos.remaining();
 
   // Parse string literals: "hello world"
-  if ((match = /^"([^"]*)"/.exec(program))) {
-    expr = { type: "value", value: match[1] };
+  if ((match = /^"([^"]*)"/.exec(remaining))) {
+    expr = {
+      type: "value",
+      value: match[1],
+      line: startPos.line,
+      column: startPos.column,
+    };
+    pos.advance(match[0].length);
   }
   // Parse numbers: 123, 45.67
-  else if ((match = /^\d+(\.\d+)?/.exec(program))) {
-    expr = { type: "value", value: Number(match[0]) };
+  else if ((match = /^\d+(\.\d+)?/.exec(remaining))) {
+    expr = {
+      type: "value",
+      value: Number(match[0]),
+      line: startPos.line,
+      column: startPos.column,
+    };
+    pos.advance(match[0].length);
   }
   // Parse words/identifiers: abc, +, if, while
-  else if ((match = /^[^\s(),#"]+/.exec(program))) {
-    expr = { type: "word", name: match[0] };
+  else if ((match = /^[^\s(),#"]+/.exec(remaining))) {
+    expr = {
+      type: "word",
+      name: match[0],
+      line: startPos.line,
+      column: startPos.column,
+    };
+    pos.advance(match[0].length);
   } else {
-    throw new SyntaxError("Unexpected syntax: " + program);
+    throw new EggSyntaxError(
+      `Unexpected syntax: "${remaining.slice(0, 10)}..."`,
+      pos.line,
+      pos.column
+    );
   }
 
-  return parseApply(expr, program.slice(match[0].length));
+  return parseApply(expr, pos);
 }
 
 /**
