@@ -182,9 +182,15 @@ function parseApply(expr, pos) {
  * @returns {Object} - The Abstract Syntax Tree (AST) for the program
  */
 function parse(program) {
-  let { expr, rest } = parseExpression(program);
-  if (skipSpace(rest).length > 0) {
-    throw new SyntaxError("Unexpected text after program");
+  const pos = new SourcePosition(program);
+  const expr = parseExpression(pos);
+  skipSpace(pos);
+  if (pos.remaining().length > 0) {
+    throw new EggSyntaxError(
+      "Unexpected text after program",
+      pos.line,
+      pos.column
+    );
   }
   return expr;
 }
