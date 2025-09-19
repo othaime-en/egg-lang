@@ -195,11 +195,30 @@ function parse(program) {
   return expr;
 }
 
+// Legacy functions for backward compatibility
+function skipSpaceLegacy(string) {
+  let match = string.match(/^(\s|#.*)*/);
+  return string.slice(match[0].length);
+}
+
+function parseExpressionLegacy(program) {
+  const pos = new SourcePosition(program);
+  const expr = parseExpression(pos);
+  return { expr, rest: pos.remaining() };
+}
+
+function parseApplyLegacy(expr, program) {
+  const pos = new SourcePosition(program);
+  pos.pos = 0; // Start from beginning since we're given the remaining program
+  const result = parseApply(expr, pos);
+  return { expr: result, rest: pos.remaining() };
+}
+
 module.exports = {
   parse,
-  skipSpace,
-  parseExpression,
-  parseApply,
+  skipSpace: skipSpaceLegacy,
+  parseExpression: parseExpressionLegacy,
+  parseApply: parseApplyLegacy,
   EggSyntaxError,
   SourcePosition,
 };
