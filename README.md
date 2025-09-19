@@ -176,3 +176,48 @@ define(x, 5)  # Comments can be at end of line
 # Multiple lines of comments
 # are supported
 ```
+
+## Built-in Functions
+
+### Arithmetic
+
+- `+(a, b)` - Addition
+- `-(a, b)` - Subtraction
+- `*(a, b)` - Multiplication
+- `/(a, b)` - Division
+
+### Comparison
+
+- `==(a, b)` - Equality
+- `!=(a, b)` - Inequality
+- `<(a, b)` - Less than
+- `>(a, b)` - Greater than
+- `<=(a, b)` - Less than or equal
+- `>=(a, b)` - Greater than or equal
+
+### Logic
+
+- `&&(a, b)` - Logical AND
+- `||(a, b)` - Logical OR
+- `!(a)` - Logical NOT
+
+### Arrays
+
+- `array(...values)` - Create array
+- `length(array)` - Get array length
+- `element(array, index)` - Get element at index
+
+### Utility
+
+- `print(value)` - Print value to console
+- `type(value)` - Get type of value
+
+### Math
+
+- `abs(n)` - Absolute value
+- `min(a, b)` - Minimum
+- `max(a, b)` - Maximum
+- `floor(n)` - Floor
+- `ceil(n)` - Ceiling
+- `round(n)` - Round
+- `random()` - Random number 0-1
