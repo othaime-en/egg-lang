@@ -3,6 +3,35 @@
  * Executes the Abstract Syntax Tree (AST) produced by the parser
  */
 
+/**
+ * Enhanced error classes with position information
+ */
+class EggReferenceError extends ReferenceError {
+  constructor(message, expr) {
+    const pos =
+      expr && expr.line ? ` at line ${expr.line}, column ${expr.column}` : "";
+    super(message + pos);
+    this.name = "EggReferenceError";
+    if (expr) {
+      this.line = expr.line;
+      this.column = expr.column;
+    }
+  }
+}
+
+class EggTypeError extends TypeError {
+  constructor(message, expr) {
+    const pos =
+      expr && expr.line ? ` at line ${expr.line}, column ${expr.column}` : "";
+    super(message + pos);
+    this.name = "EggTypeError";
+    if (expr) {
+      this.line = expr.line;
+      this.column = expr.column;
+    }
+  }
+}
+
 // Special forms will be injected to avoid circular dependency
 let specialForms = {};
 
