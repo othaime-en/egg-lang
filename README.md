@@ -159,3 +159,20 @@ do(
   +(x, y)
 )
 ```
+
+### Arrays
+
+```egg
+define(arr, array(1, 2, 3, 4))   # Create array
+length(arr)                      # Get length
+element(arr, 0)                  # Get element at index
+```
+
+### Comments
+
+```egg
+# This is a comment
+define(x, 5)  # Comments can be at end of line
+# Multiple lines of comments
+# are supported
+```
