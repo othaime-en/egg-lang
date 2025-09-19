@@ -195,4 +195,11 @@ function parse(program) {
   return expr;
 }
 
-module.exports = { parse, skipSpace, parseExpression, parseApply };
+module.exports = {
+  parse,
+  skipSpace,
+  parseExpression,
+  parseApply,
+  EggSyntaxError,
+  SourcePosition,
+};
