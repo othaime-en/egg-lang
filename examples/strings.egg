@@ -10,13 +10,30 @@ do(
   print(name),
   print("Greeting:"),
   print(fullGreeting),
+  print("Length of greeting:"),
+  print(length(fullGreeting)),
+  
+  # String manipulation
+  define(text, "  Hello World  "),
+  print("Original text:"),
+  print(concat("'", concat(text, "'"))),
+  print("Trimmed:"),
+  print(concat("'", concat(trim(text), "'"))),
+  print("Uppercase:"),
+  print(toUpperCase(trim(text))),
+  print("Lowercase:"),
+  print(toLowerCase(trim(text))),
   
   # String searching
-  define(sentence, "The quick bronw jumps"),
+  define(sentence, "The quick brown fox jumps"),
   print("Sentence:"),
   print(sentence),
   print("Index of 'fox':"),
   print(indexOf(sentence, "fox", 0)),
+  print("Starts with 'The':"),
+  print(startsWith(sentence, "The")),
+  print("Ends with 'jumps':"),
+  print(endsWith(sentence, "jumps")),
   
   # Substring operations
   print("Substring (4, 9):"),
@@ -25,16 +42,24 @@ do(
   print(charAt(sentence, 10)),
   
   # String splitting
-  define(words, split(sentence, " ", 0)),
+  define(sentence1, "The quick brown fox jumps"),
+  define(words, split(sentence1, " ", 0)),
   print("Words array:"),
   print(words),
   print("Number of words:"),
   print(length(words)),
-    
+  print("First word:"),
+  print(element(words, 0)),
+  
   # String replacement
   define(newSentence, replace(sentence, "fox", "cat")),
   print("Original:"),
   print(sentence),
   print("After replacement:"),
-  print(newSentence)
+  print(newSentence),
+  
+  # String repetition
+  define(pattern, repeat("*", 5)),
+  print("Pattern:"),
+  print(pattern)
 )
