@@ -1,0 +1,40 @@
+# String operations examples in Egg
+
+do(
+  # Basic string operations
+  define(name, "Alice"),
+  define(greeting, "Hello"),
+  define(fullGreeting, concat(greeting, concat(" ", name))),
+  
+  print("Name:"),
+  print(name),
+  print("Greeting:"),
+  print(fullGreeting),
+  
+  # String searching
+  define(sentence, "The quick bronw jumps"),
+  print("Sentence:"),
+  print(sentence),
+  print("Index of 'fox':"),
+  print(indexOf(sentence, "fox", 0)),
+  
+  # Substring operations
+  print("Substring (4, 9):"),
+  print(substring(sentence, 4, 9)),
+  print("Character at index 10:"),
+  print(charAt(sentence, 10)),
+  
+  # String splitting
+  define(words, split(sentence, " ", 0)),
+  print("Words array:"),
+  print(words),
+  print("Number of words:"),
+  print(length(words)),
+    
+  # String replacement
+  define(newSentence, replace(sentence, "fox", "cat")),
+  print("Original:"),
+  print(sentence),
+  print("After replacement:"),
+  print(newSentence)
+)
