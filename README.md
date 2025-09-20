@@ -221,3 +221,57 @@ define(x, 5)  # Comments can be at end of line
 - `ceil(n)` - Ceiling
 - `round(n)` - Round
 - `random()` - Random number 0-1
+
+## Examples
+
+### Sum of Numbers 1-10
+
+```egg
+do(
+  define(total, 0),
+  define(count, 1),
+  while(<(count, 11),
+    do(
+      define(total, +(total, count)),
+      define(count, +(count, 1))
+    )
+  ),
+  print(total)  # Prints 55
+)
+```
+
+### Fibonacci Sequence
+
+```egg
+do(
+  define(fib, fun(n,
+    if(<(n, 2),
+       n,
+       +(fib(-(n, 1)), fib(-(n, 2)))
+    )
+  )),
+  print(fib(10))  # Prints 55
+)
+```
+
+### Array Processing
+
+```egg
+do(
+  define(numbers, array(5, 2, 8, 1, 9)),
+  define(sum, fun(arr,
+    do(
+      define(i, 0),
+      define(total, 0),
+      while(<(i, length(arr)),
+        do(
+          define(total, +(total, element(arr, i))),
+          define(i, +(i, 1))
+        )
+      ),
+      total
+    )
+  )),
+  print(sum(numbers))  # Prints 25
+)
+```
