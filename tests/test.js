@@ -266,4 +266,35 @@ test("Set undefined variable throws error", () => {
   }
 });
 
+// Error message tests
+test("Better error messages include position", () => {
+  try {
+    run("undefinedVar");
+    throw new Error("Should have thrown ReferenceError");
+  } catch (error) {
+    assertEquals(error.name, "EggReferenceError");
+    // Should include line and column information
+    assertEquals(error.message.includes("line"), true);
+  }
+});
+
+test("Type errors include position", () => {
+  try {
+    run("5()"); // Try to call number as function
+    throw new Error("Should have thrown TypeError");
+  } catch (error) {
+    assertEquals(error.name, "EggTypeError");
+  }
+});
+
+test("Syntax errors include position", () => {
+  try {
+    run("+(1, 2"); // Missing closing parenthesis
+    throw new Error("Should have thrown SyntaxError");
+  } catch (error) {
+    assertEquals(error.name, "EggSyntaxError");
+    assertEquals(error.message.includes("line"), true);
+  }
+});
+
 console.log("\nAll tests completed!");
