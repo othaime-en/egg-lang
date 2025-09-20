@@ -275,3 +275,13 @@ do(
   print(sum(numbers))  # Prints 25
 )
 ```
+
+## Architecture
+
+The language implementation consists of several modules:
+
+- **parser.js** - Converts source code into Abstract Syntax Tree (AST)
+- **evaluator.js** - Executes the AST
+- **special-forms.js** - Implements special syntax (if, while, define, etc.)
+- **environment.js** - Defines built-in functions and global scope
+- **egg.js** - Main module with CLI and REPL
