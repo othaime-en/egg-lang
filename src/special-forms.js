@@ -13,9 +13,13 @@ const specialForms = Object.create(null);
  * if(condition, then, else) - Conditional expression
  * Only evaluates the appropriate branch based on condition
  */
-specialForms.if = (args, scope) => {
+specialForms.if = (args, scope, expr) => {
   if (args.length != 3) {
-    throw new SyntaxError("Wrong number of args to if");
+    throw new EggSyntaxError(
+      "Wrong number of args to if",
+      expr?.line,
+      expr?.column
+    );
   } else if (evaluate(args[0], scope) !== false) {
     return evaluate(args[1], scope);
   } else {
@@ -27,9 +31,13 @@ specialForms.if = (args, scope) => {
  * while(condition, body) - Loop construct
  * Repeatedly evaluates body while condition is truthy
  */
-specialForms.while = (args, scope) => {
+specialForms.while = (args, scope, expr) => {
   if (args.length != 2) {
-    throw new SyntaxError("Wrong number of args to while");
+    throw new EggSyntaxError(
+      "Wrong number of args to while",
+      expr?.line,
+      expr?.column
+    );
   }
 
   while (evaluate(args[0], scope) !== false) {
@@ -56,9 +64,13 @@ specialForms.do = (args, scope) => {
  * define(name, value) - Variable definition
  * Creates a new binding in the current scope
  */
-specialForms.define = (args, scope) => {
+specialForms.define = (args, scope, expr) => {
   if (args.length != 2 || args[0].type != "word") {
-    throw new SyntaxError("Incorrect use of define");
+    throw new EggSyntaxError(
+      "Incorrect use of define",
+      expr?.line,
+      expr?.column
+    );
   }
 
   let value = evaluate(args[1], scope);
@@ -70,22 +82,28 @@ specialForms.define = (args, scope) => {
  * fun(param1, param2, ..., body) - Function definition
  * Creates a function with the given parameters and body
  */
-specialForms.fun = (args, scope) => {
+specialForms.fun = (args, scope, expr) => {
   if (!args.length) {
-    throw new SyntaxError("Functions need a body");
+    throw new EggSyntaxError("Functions need a body", expr?.line, expr?.column);
   }
 
   let body = args[args.length - 1];
-  let params = args.slice(0, args.length - 1).map((expr) => {
-    if (expr.type != "word") {
-      throw new SyntaxError("Parameter names must be words");
+  let params = args.slice(0, args.length - 1).map((paramExpr) => {
+    if (paramExpr.type != "word") {
+      throw new EggSyntaxError(
+        "Parameter names must be words",
+        paramExpr?.line,
+        paramExpr?.column
+      );
     }
-    return expr.name;
+    return paramExpr.name;
   });
 
   return function (...args) {
     if (args.length != params.length) {
-      throw new TypeError("Wrong number of arguments");
+      throw new EggTypeError(
+        `Wrong number of arguments: expected ${params.length}, got ${args.length}`
+      );
     }
 
     let localScope = Object.create(scope);
@@ -100,9 +118,9 @@ specialForms.fun = (args, scope) => {
  * set(name, value) - Variable assignment
  * Updates an existing binding, searches outer scopes if necessary
  */
-specialForms.set = (args, scope) => {
+specialForms.set = (args, scope, expr) => {
   if (args.length != 2 || args[0].type != "word") {
-    throw new SyntaxError("Incorrect use of set");
+    throw new EggSyntaxError("Incorrect use of set", expr?.line, expr?.column);
   }
 
   let name = args[0].name;
@@ -120,7 +138,7 @@ specialForms.set = (args, scope) => {
     }
   }
 
-  throw new ReferenceError(`Undefined binding: ${name}`);
+  throw new EggReferenceError(`Undefined binding: ${name}`, args[0]);
 };
 
 /**
