@@ -1,0 +1,27 @@
+# Error examples - these will cause various errors with line/column info
+
+do(
+  # This will work fine
+  define(x, 10),
+  print("x is:"),
+  print(x),
+  
+  # Uncomment the lines below to see different error types:
+  
+  # Undefined variable error (line will be shown)
+  # print(undefinedVariable),
+  
+  # Type error - trying to call a non-function
+  # x(),
+  
+  # Syntax error - missing closing parenthesis
+  # +(1, 2
+  
+  # Wrong number of arguments to if
+  # if(true, "only two args"),
+  
+  # Trying to set undefined variable
+  # set(nonExistentVar, 5),
+  
+  print("Program completed successfully!")
+)
