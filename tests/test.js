@@ -301,6 +301,66 @@ test("String splitting", () => {
   assertEquals(result[0], "a");
 });
 
+// Enhanced array tests (some of them keep failing too. Again, I'll look into it)
+test("Array push and pop", () => {
+  const result = run(`
+    do(
+      define(arr, array(1, 2, 3)),
+      push(arr, 4),
+      arr
+    )
+  `);
+  assertEquals(result.length, 4);
+  assertEquals(result[3], 4);
+});
+
+test("Array map function", () => {
+  const result = run(`
+    do(
+      define(numbers, array(1, 2, 3)),
+      define(double, fun(x, *(x, 2))),
+      map(numbers, double)
+    )
+  `);
+  assertEquals(result[0], 2);
+  assertEquals(result[1], 4);
+  assertEquals(result[2], 6);
+});
+
+test("Array filter function", () => {
+  const result = run(`
+    do(
+      define(numbers, array(1, 2, 3, 4, 5)),
+      define(isEven, fun(x, ==(%(x, 2), 0))),
+      filter(numbers, isEven)
+    )
+  `);
+  assertEquals(result.length, 2);
+  assertEquals(result[0], 2);
+  assertEquals(result[1], 4);
+});
+
+test("Array reduce function", () => {
+  const result = run(`
+    do(
+      define(numbers, array(1, 2, 3, 4)),
+      define(add, fun(a, b, +(a, b))),
+      reduce(numbers, add, 0)
+    )
+  `);
+  assertEquals(result, 10);
+});
+
+test("Array includes", () => {
+  assertEquals(run("includes(array(1, 2, 3), 2, 0)"), true);
+  assertEquals(run("includes(array(1, 2, 3), 5, 0)"), false);
+});
+
+test("Array join", () => {
+  const result = run('join(array("a", "b", "c"), "-")');
+  assertEquals(result, "a-b-c");
+});
+
 // Error message tests
 test("Better error messages include position", () => {
   try {
