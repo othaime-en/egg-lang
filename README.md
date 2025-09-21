@@ -4,10 +4,23 @@ This is a simple programming language implementation based on the guide from [El
 
 ## Features
 
+- **Simple Syntax**: Everything is an expression
 - **Functions**: First-class functions with closures
 - **Control Flow**: `if` conditionals and `while` loops
 - **Variables**: Variable definition and assignment
 - **Arrays**: Built-in array support
+- **Comments**: Line comments starting with `#`
+- **REPL**: Interactive shell for testing
+
+## Architecture
+
+The language implementation consists of several modules:
+
+- **parser.js** - Converts source code into Abstract Syntax Tree (AST)
+- **evaluator.js** - Executes the AST
+- **special-forms.js** - Implements special syntax (if, while, define, etc.)
+- **environment.js** - Defines built-in functions and global scope
+- **egg.js** - Main module with CLI and REPL
 
 ## Installation
 
@@ -275,13 +288,3 @@ do(
   print(sum(numbers))  # Prints 25
 )
 ```
-
-## Architecture
-
-The language implementation consists of several modules:
-
-- **parser.js** - Converts source code into Abstract Syntax Tree (AST)
-- **evaluator.js** - Executes the AST
-- **special-forms.js** - Implements special syntax (if, while, define, etc.)
-- **environment.js** - Defines built-in functions and global scope
-- **egg.js** - Main module with CLI and REPL
