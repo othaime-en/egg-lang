@@ -266,6 +266,41 @@ test("Set undefined variable throws error", () => {
   }
 });
 
+// String operation tests
+test("String concatenation", () => {
+  const result = run('concat("hello", " world")');
+  assertEquals(result, "hello world");
+});
+
+test("String length", () => {
+  assertEquals(run('length("hello")'), 5);
+  assertEquals(run("length(array(1, 2, 3))"), 3);
+});
+
+test("String substring", () => {
+  const result = run('substring("hello world", 0, 5)');
+  assertEquals(result, "hello");
+});
+
+test("String case conversion", () => {
+  assertEquals(run('toUpperCase("hello")'), "HELLO");
+  assertEquals(run('toLowerCase("WORLD")'), "world");
+});
+
+test("String indexOf", () => {
+  assertEquals(run('indexOf("hello world", "world", 0)'), 6);
+  assertEquals(run('indexOf("hello", "xyz", 0)'), -1);
+});
+
+// Currently, this fails. Hopefully I remember to look into it!!!
+// Whoever is reading this, create an issue if enough time has passed and this tests still fails
+test("String splitting", () => {
+  const result = run('split("a,b,c", ",", 0)');
+  assertEquals(Array.isArray(result), true);
+  assertEquals(result.length, 3);
+  assertEquals(result[0], "a");
+});
+
 // Error message tests
 test("Better error messages include position", () => {
   try {
