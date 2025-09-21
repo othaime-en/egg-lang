@@ -264,6 +264,19 @@ topScope.forEach = (array, callback) => {
   return array; // Return array for chaining
 };
 
+// Object operations
+topScope.object = (...pairs) => {};
+
+topScope.get = (obj, key) => {};
+
+topScope.set = (obj, key, value) => {};
+
+topScope.hasProperty = (obj, key) => {};
+
+topScope.keys = (obj) => {};
+
+topScope.values = (obj) => {};
+
 // Additional utility functions
 topScope.type = (value) => {
   if (Array.isArray(value)) return "array";
