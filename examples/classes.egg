@@ -1,0 +1,46 @@
+# Class examples in Egg
+
+do(
+  # Define a Person class
+  class(Person,
+    # Constructor function
+    fun(this, name, age,
+      do(
+        setProperty(this, "name", name),
+        setProperty(this, "age", age)
+      )
+    ),
+    # Methods
+    method("greet", fun(this,
+      concat("Hello, my name is ", get(this, "name"))
+    )),
+    method("getAge", fun(this,
+      get(this, "age")
+    )),
+    method("haveBirthday", fun(this,
+      do(
+        define(currentAge, get(this, "age")),
+        setProperty(this, "age", +(currentAge, 1)),
+        concat("Happy birthday! Now ", concat(get(this, "age"), " years old"))
+      )
+    ))
+  ),
+  
+  # Create instances
+  define(alice, new(Person, "Alice", 30)),
+  define(bob, new(Person, "Bob", 25)),
+  
+  print("Alice greeting:"),
+  print(call(alice, "greet")),
+  print("Bob greeting:"),
+  print(call(bob, "greet")),
+  
+  print("Alice's age:"),
+  print(call(alice, "getAge")),
+  
+  print("Alice's birthday:"),
+  print(call(alice, "haveBirthday")),
+  print("Alice's new age:"),
+  print(call(alice, "getAge")),
+  
+)
