@@ -38,5 +38,33 @@ do(
   print(keys(person)),
   print("Object values:"),
   print(values(person)),
+
+  # Create a more complex object
+  define(car, object(
+    "make", "Toyota",
+    "model", "Camry", 
+    "year", 2023,
+    "mileage", 0
+  )),
+  
+  print("Car object:"),
+  print(car),
+  
+  # Simulate driving
+  define(drive, fun(car, miles,
+    do(
+      define(currentMileage, get(car, "mileage")),
+      setProperty(car, "mileage", +(currentMileage, miles)),
+      concat("Drove ", concat(miles, " miles"))
+    )
+  )),
+  
+  print(drive(car, 100)),
+  print("Car mileage:"),
+  print(get(car, "mileage")),
+  
+  print(drive(car, 250)),
+  print("Car mileage after more driving:"),
+  print(get(car, "mileage"))
   
 )
