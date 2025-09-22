@@ -43,4 +43,59 @@ do(
   print("Alice's new age:"),
   print(call(alice, "getAge")),
   
+  # Define a BankAccount class
+  class(BankAccount,
+    fun(this, owner, initialBalance,
+      do(
+        setProperty(this, "owner", owner),
+        setProperty(this, "balance", initialBalance),
+        setProperty(this, "transactions", array())
+      )
+    ),
+    method("deposit", fun(this, amount,
+      do(
+        define(currentBalance, get(this, "balance")),
+        define(newBalance, +(currentBalance, amount)),
+        setProperty(this, "balance", newBalance),
+        push(get(this, "transactions"), concat("Deposit: $", amount)),
+        concat("Deposited $", concat(amount, concat(". New balance: $", newBalance)))
+      )
+    )),
+    method("withdraw", fun(this, amount,
+      do(
+        define(currentBalance, get(this, "balance")),
+        if(>=(currentBalance, amount),
+          do(
+            define(newBalance, -(currentBalance, amount)),
+            setProperty(this, "balance", newBalance),
+            push(get(this, "transactions"), concat("Withdrawal: $", amount)),
+            concat("Withdrew $", concat(amount, concat(". New balance: $", newBalance)))
+          ),
+          "Insufficient funds"
+        )
+      )
+    )),
+    method("getBalance", fun(this,
+      get(this, "balance")
+    )),
+    method("getTransactions", fun(this,
+      get(this, "transactions")
+    ))
+  ),
+  
+  # Create a bank account
+  define(account, new(BankAccount, "Alice", 1000)),
+  
+  print("Initial balance:"),
+  print(call(account, "getBalance")),
+  
+  print(call(account, "deposit", 500)),
+  print(call(account, "withdraw", 200)),
+  print(call(account, "withdraw", 2000)),  # Should fail
+  
+  print("Final balance:"),
+  print(call(account, "getBalance")),
+  
+  print("Transaction history:"),
+  print(call(account, "getTransactions"))
 )
