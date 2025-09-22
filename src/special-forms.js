@@ -230,6 +230,40 @@ specialForms.class = (args, scope, expr) => {
 };
 
 /**
+ * method(name, function) - Method definition helper
+ * Used inside class definitions
+ */
+specialForms.method = (args, scope, expr) => {
+  // This is just a marker - actual processing happens in class definition
+  const pos =
+    expr && expr.line ? ` at line ${expr.line}, column ${expr.column}` : "";
+  throw new SyntaxError(
+    "method() can only be used inside class definitions" + pos
+  );
+};
+
+/**
+ * new(constructor, ...args) - Object instantiation
+ * Creates new instance of a class
+ */
+specialForms.new = (args, scope, exp) => {
+  if (args.length < 1) {
+    const pos =
+      expr && expr.line ? ` at line ${expr.line}, column ${expr.column}` : "";
+    throw new SyntaxError("new requires a constructor function" + pos);
+  }
+
+  const constructor = evaluate(args[0], scope);
+  const constructorArgs = args.slice(1).map((arg) => evaluate(arg, scope));
+
+  if (typeof constructor !== "function") {
+    throw new TypeError("new() requires a constructor function");
+  }
+
+  return new constructor(...constructorArgs);
+};
+
+/**
  * Sets the evaluate function (used to avoid circular dependency)
  * @param {Function} evaluateFunction - The evaluate function
  */
