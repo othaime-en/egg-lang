@@ -142,6 +142,22 @@ specialForms.set = (args, scope, expr) => {
 };
 
 /**
+ * class(name, constructor, ...methods) - Class definition
+ * Creates a constructor function with prototype methods
+ */
+specialForms.class = (args, scope, expr) => {
+  // Class creation functionality goes here...
+
+  // Evaluate the constructor function
+
+  // Create the class constructor function
+
+  // Add methods to prototype
+
+  return ClassConstructor;
+};
+
+/**
  * Sets the evaluate function (used to avoid circular dependency)
  * @param {Function} evaluateFunction - The evaluate function
  */
