@@ -246,7 +246,7 @@ specialForms.method = (args, scope, expr) => {
  * new(constructor, ...args) - Object instantiation
  * Creates new instance of a class
  */
-specialForms.new = (args, scope, exp) => {
+specialForms.new = (args, scope, expr) => {
   if (args.length < 1) {
     const pos =
       expr && expr.line ? ` at line ${expr.line}, column ${expr.column}` : "";
