@@ -426,4 +426,45 @@ test("Object keys and values", () => {
   assertEquals(keys.includes("b"), true);
 });
 
+// Class tests
+test("Class creation and instantiation", () => {
+  const result = run(`
+    do(
+      class(TestClass,
+        fun(this, value,
+          setProperty(this, "value", value)
+        ),
+        method("getValue", fun(this,
+          get(this, "value")
+        ))
+      ),
+      define(instance, new(TestClass, 42)),
+      call(instance, "getValue")
+    )
+  `);
+  assertEquals(result, 42);
+});
+
+test("Class method calls", () => {
+  const result = run(`
+    do(
+      class(Counter,
+        fun(this, start,
+          setProperty(this, "count", start)
+        ),
+        method("increment", fun(this,
+          do(
+            define(current, get(this, "count")),
+            setProperty(this, "count", +(current, 1)),
+            get(this, "count")
+          )
+        ))
+      ),
+      define(counter, new(Counter, 5)),
+      call(counter, "increment")
+    )
+  `);
+  assertEquals(result, 6);
+});
+
 console.log("\nAll tests completed!");
