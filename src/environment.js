@@ -294,12 +294,12 @@ topScope.get = (obj, key) => {
   return obj[key];
 };
 
-topScope.set = (obj, key, value) => {
+topScope.setProperty = (obj, key, value) => {
   if (typeof obj !== "object" || obj === null || Array.isArray(obj)) {
-    throw new TypeError("set() requires an object as first argument");
+    throw new TypeError("setProperty() requires an object as first argument");
   }
   if (typeof key !== "string") {
-    throw new TypeError("set() requires a string key");
+    throw new TypeError("setProperty() requires a string key");
   }
   obj[key] = value;
   return value;
