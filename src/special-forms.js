@@ -264,6 +264,39 @@ specialForms.new = (args, scope, expr) => {
 };
 
 /**
+ * call(object, method, ...args) - Method call
+ * Calls a method on an object with proper 'this' binding
+ */
+specialForms.call = (args, scope, expr) => {
+  if (args.length < 2) {
+    const pos =
+      expr && expr.line ? ` at line ${expr.line}, column ${expr.column}` : "";
+    throw new SyntaxError(
+      "call requires at least object and method name" + pos
+    );
+  }
+
+  const obj = evaluate(args[0], scope);
+  const methodName = evaluate(args[1], scope);
+  const methodArgs = args.slice(2).map((arg) => evaluate(arg, scope));
+
+  if (typeof obj !== "object" || obj === null) {
+    throw new TypeError("call() requires an object as first argument");
+  }
+
+  if (typeof methodName !== "string") {
+    throw new TypeError("Method name must be a string");
+  }
+
+  const method = obj[methodName];
+  if (typeof method !== "function") {
+    throw new TypeError(`Method '${methodName}' is not a function`);
+  }
+
+  return method.apply(obj, methodArgs);
+};
+
+/**
  * Sets the evaluate function (used to avoid circular dependency)
  * @param {Function} evaluateFunction - The evaluate function
  */
