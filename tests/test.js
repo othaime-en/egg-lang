@@ -392,4 +392,38 @@ test("Syntax errors include position", () => {
   }
 });
 
+// Object tests
+test("Create and access object", () => {
+  const result = run(`
+    do(
+      define(obj, object("name", "Alice", "age", 30)),
+      get(obj, "name")
+    )
+  `);
+  assertEquals(result, "Alice");
+});
+
+test("Object property modification", () => {
+  const result = run(`
+    do(
+      define(obj, object("count", 5)),
+      setProperty(obj, "count", 10),
+      get(obj, "count")
+    )
+  `);
+  assertEquals(result, 10);
+});
+
+test("Object keys and values", () => {
+  const keys = run(`
+    do(
+      define(obj, object("a", 1, "b", 2)),
+      keys(obj)
+    )
+  `);
+  assertEquals(keys.length, 2);
+  assertEquals(keys.includes("a"), true);
+  assertEquals(keys.includes("b"), true);
+});
+
 console.log("\nAll tests completed!");
