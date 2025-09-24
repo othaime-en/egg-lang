@@ -1,0 +1,89 @@
+# Advanced array operations in Egg
+
+do(
+  # Create and manipulate arrays
+  define(numbers, array(1, 2, 3, 4, 5)),
+  print("Original array:"),
+  print(numbers),
+  
+  # Array modification methods
+  print("Pushed 6, new length:"),
+  print(push(numbers, 6)),
+  print("Array after push:"),
+  print(numbers),
+  
+  print("Popped element:"),
+  print(pop(numbers)),
+  print("Array after pop:"),
+  print(numbers),
+  
+  print("Unshifted 0, new length:"),
+  print(unshift(numbers, 0)),
+  print("Array after unshift:"),
+  print(numbers),
+  
+  print("Shifted element:"),
+  print(shift(numbers)),
+  print("Array after shift:"),
+  print(numbers),
+  
+  # Array slicing and joining
+  define(slice1, slice(numbers, 1, 3)),
+  print("Slice from index 1 to 3:"),
+  print(slice1),
+  
+  define(joined, join(numbers, "-")),
+  print("Joined with '-':"),
+  print(joined),
+  
+  # Array searching
+  print("Includes 3:"),
+  print(includes(numbers, 3)),
+  print("Includes 10:"),
+  print(includes(numbers, 10)),
+  
+  # Higher-order array functions
+  define(doubleFunction, fun(x, *(x, 2))),
+  define(doubled, map(numbers, doubleFunction)),
+  print("Original numbers:"),
+  print(numbers),
+  print("Doubled numbers:"),
+  print(doubled),
+  
+  define(isEven, fun(x, ==(%(x, 2), 0))),
+  define(evenNumbers, filter(numbers, isEven)),
+  print("Even numbers:"),
+  print(evenNumbers),
+  
+  define(sum, reduce(numbers, fun(acc, val, +(acc, val)), 0)),
+  print("Sum of numbers:"),
+  print(sum),
+  
+  # Find operations
+  define(findGreaterThan3, fun(x, >(x, 3))),
+  define(found, find(numbers, findGreaterThan3)),
+  print("First number greater than 3:"),
+  print(found),
+  
+  # Sorting and reversing
+  define(mixedNumbers, array(3, 1, 4, 1, 5, 9, 2, 6)),
+  print("Mixed numbers:"),
+  print(mixedNumbers),
+  print("Sorted:"),
+  print(sort(mixedNumbers)),
+  print("Reversed:"),
+  print(reverse(mixedNumbers)),
+  
+  # Working with string arrays
+  define(fruits, array("apple", "banana", "cherry", "date")),
+  print("Fruits:"),
+  print(fruits),
+  
+  define(upperFruits, map(fruits, fun(fruit, toUpperCase(fruit)))),
+  print("Uppercase fruits:"),
+  print(upperFruits),
+  
+  define(longFruits, filter(fruits, fun(fruit, >(length(fruit), 5)))),
+  print("Fruits with more than 5 letters:"),
+  print(longFruits)
+)

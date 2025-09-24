@@ -266,4 +266,130 @@ test("Set undefined variable throws error", () => {
   }
 });
 
+// String operation tests
+test("String concatenation", () => {
+  const result = run('concat("hello", " world")');
+  assertEquals(result, "hello world");
+});
+
+test("String length", () => {
+  assertEquals(run('length("hello")'), 5);
+  assertEquals(run("length(array(1, 2, 3))"), 3);
+});
+
+test("String substring", () => {
+  const result = run('substring("hello world", 0, 5)');
+  assertEquals(result, "hello");
+});
+
+test("String case conversion", () => {
+  assertEquals(run('toUpperCase("hello")'), "HELLO");
+  assertEquals(run('toLowerCase("WORLD")'), "world");
+});
+
+test("String indexOf", () => {
+  assertEquals(run('indexOf("hello world", "world", 0)'), 6);
+  assertEquals(run('indexOf("hello", "xyz", 0)'), -1);
+});
+
+// Currently, this fails. Hopefully I remember to look into it!!!
+// Whoever is reading this, create an issue if enough time has passed and this tests still fails
+test("String splitting", () => {
+  const result = run('split("a,b,c", ",", 0)');
+  assertEquals(Array.isArray(result), true);
+  assertEquals(result.length, 3);
+  assertEquals(result[0], "a");
+});
+
+// Enhanced array tests (some of them keep failing too. Again, I'll look into it)
+test("Array push and pop", () => {
+  const result = run(`
+    do(
+      define(arr, array(1, 2, 3)),
+      push(arr, 4),
+      arr
+    )
+  `);
+  assertEquals(result.length, 4);
+  assertEquals(result[3], 4);
+});
+
+test("Array map function", () => {
+  const result = run(`
+    do(
+      define(numbers, array(1, 2, 3)),
+      define(double, fun(x, *(x, 2))),
+      map(numbers, double)
+    )
+  `);
+  assertEquals(result[0], 2);
+  assertEquals(result[1], 4);
+  assertEquals(result[2], 6);
+});
+
+test("Array filter function", () => {
+  const result = run(`
+    do(
+      define(numbers, array(1, 2, 3, 4, 5)),
+      define(isEven, fun(x, ==(%(x, 2), 0))),
+      filter(numbers, isEven)
+    )
+  `);
+  assertEquals(result.length, 2);
+  assertEquals(result[0], 2);
+  assertEquals(result[1], 4);
+});
+
+test("Array reduce function", () => {
+  const result = run(`
+    do(
+      define(numbers, array(1, 2, 3, 4)),
+      define(add, fun(a, b, +(a, b))),
+      reduce(numbers, add, 0)
+    )
+  `);
+  assertEquals(result, 10);
+});
+
+test("Array includes", () => {
+  assertEquals(run("includes(array(1, 2, 3), 2, 0)"), true);
+  assertEquals(run("includes(array(1, 2, 3), 5, 0)"), false);
+});
+
+test("Array join", () => {
+  const result = run('join(array("a", "b", "c"), "-")');
+  assertEquals(result, "a-b-c");
+});
+
+// Error message tests
+test("Better error messages include position", () => {
+  try {
+    run("undefinedVar");
+    throw new Error("Should have thrown ReferenceError");
+  } catch (error) {
+    assertEquals(error.name, "EggReferenceError");
+    // Should include line and column information
+    assertEquals(error.message.includes("line"), true);
+  }
+});
+
+test("Type errors include position", () => {
+  try {
+    run("5()"); // Try to call number as function
+    throw new Error("Should have thrown TypeError");
+  } catch (error) {
+    assertEquals(error.name, "EggTypeError");
+  }
+});
+
+test("Syntax errors include position", () => {
+  try {
+    run("+(1, 2"); // Missing closing parenthesis
+    throw new Error("Should have thrown SyntaxError");
+  } catch (error) {
+    assertEquals(error.name, "EggSyntaxError");
+    assertEquals(error.message.includes("line"), true);
+  }
+});
+
 console.log("\nAll tests completed!");

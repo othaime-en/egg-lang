@@ -4,76 +4,176 @@
  */
 
 /**
- * Skips whitespace and comments from the beginning of a string
- * @param {string} string - The input string
- * @returns {string} - String with leading whitespace and comments removed
+ * Enhanced error class with position information
  */
-function skipSpace(string) {
-  // Match whitespace or comments (# to end of line), zero or more times
-  let match = string.match(/^(\s|#.*)*/);
-  return string.slice(match[0].length);
+class EggSyntaxError extends SyntaxError {
+  constructor(message, line = 1, column = 1) {
+    super(`${message} at line ${line}, column ${column}`);
+    this.line = line;
+    this.column = column;
+    this.name = "EggSyntaxError";
+  }
 }
 
 /**
- * Parses a single expression from the program string
- * @param {string} program - The program string to parse
- * @returns {Object} - Object containing the parsed expression and remaining string
+ * Tracks position in source code for better error reporting
  */
-function parseExpression(program) {
-  program = skipSpace(program);
+class SourcePosition {
+  constructor(source) {
+    this.source = source;
+    this.pos = 0;
+    this.line = 1;
+    this.column = 1;
+  }
+
+  peek() {
+    return this.source[this.pos] || "";
+  }
+
+  advance(count = 1) {
+    for (let i = 0; i < count && this.pos < this.source.length; i++) {
+      if (this.source[this.pos] === "\n") {
+        this.line++;
+        this.column = 1;
+      } else {
+        this.column++;
+      }
+      this.pos++;
+    }
+  }
+
+  remaining() {
+    return this.source.slice(this.pos);
+  }
+
+  slice(start, end) {
+    return this.source.slice(start, end);
+  }
+
+  clone() {
+    const clone = new SourcePosition(this.source);
+    clone.pos = this.pos;
+    clone.line = this.line;
+    clone.column = this.column;
+    return clone;
+  }
+}
+
+/**
+ * Skips whitespace and comments from the current position
+ * @param {SourcePosition} pos - The source position tracker
+ */
+function skipSpace(pos) {
+  while (true) {
+    const remaining = pos.remaining();
+    // Match whitespace or comments (# to end of line)
+    const match = remaining.match(/^(\s|#[^\n]*)*/);
+    if (match[0].length === 0) break;
+    pos.advance(match[0].length);
+  }
+}
+
+/**
+ * Parses a single expression from the program
+ * @param {SourcePosition} pos - The source position tracker
+ * @returns {Object} - The parsed expression with position info
+ */
+function parseExpression(pos) {
+  skipSpace(pos);
   let match, expr;
+  const startPos = pos.clone();
+  const remaining = pos.remaining();
 
   // Parse string literals: "hello world"
-  if ((match = /^"([^"]*)"/.exec(program))) {
-    expr = { type: "value", value: match[1] };
+  if ((match = /^"([^"]*)"/.exec(remaining))) {
+    expr = {
+      type: "value",
+      value: match[1],
+      line: startPos.line,
+      column: startPos.column,
+    };
+    pos.advance(match[0].length);
   }
   // Parse numbers: 123, 45.67
-  else if ((match = /^\d+(\.\d+)?/.exec(program))) {
-    expr = { type: "value", value: Number(match[0]) };
+  else if ((match = /^\d+(\.\d+)?/.exec(remaining))) {
+    expr = {
+      type: "value",
+      value: Number(match[0]),
+      line: startPos.line,
+      column: startPos.column,
+    };
+    pos.advance(match[0].length);
   }
   // Parse words/identifiers: abc, +, if, while
-  else if ((match = /^[^\s(),#"]+/.exec(program))) {
-    expr = { type: "word", name: match[0] };
+  else if ((match = /^[^\s(),#"]+/.exec(remaining))) {
+    expr = {
+      type: "word",
+      name: match[0],
+      line: startPos.line,
+      column: startPos.column,
+    };
+    pos.advance(match[0].length);
   } else {
-    throw new SyntaxError("Unexpected syntax: " + program);
+    throw new EggSyntaxError(
+      `Unexpected syntax: "${remaining.slice(0, 10)}..."`,
+      pos.line,
+      pos.column
+    );
   }
 
-  return parseApply(expr, program.slice(match[0].length));
+  return parseApply(expr, pos);
 }
 
 /**
  * Parses function applications: func(arg1, arg2, ...)
  * @param {Object} expr - The expression that might be applied
- * @param {string} program - The remaining program string
- * @returns {Object} - Object containing the parsed expression and remaining string
+ * @param {SourcePosition} pos - The source position tracker
+ * @returns {Object} - The parsed expression
  */
-function parseApply(expr, program) {
-  program = skipSpace(program);
+function parseApply(expr, pos) {
+  skipSpace(pos);
 
   // If next character is not '(', this is not an application
-  if (program[0] != "(") {
-    return { expr: expr, rest: program };
+  if (pos.peek() !== "(") {
+    return expr;
   }
 
   // Skip opening parenthesis
-  program = skipSpace(program.slice(1));
-  expr = { type: "apply", operator: expr, args: [] };
+  pos.advance(1);
+  skipSpace(pos);
+  const applyExpr = {
+    type: "apply",
+    operator: expr,
+    args: [],
+    line: expr.line,
+    column: expr.column,
+  };
 
   // Parse arguments until we find closing parenthesis
-  while (program[0] != ")") {
-    let arg = parseExpression(program);
-    expr.args.push(arg.expr);
-    program = skipSpace(arg.rest);
+  while (pos.peek() !== ")") {
+    if (pos.peek() === "") {
+      throw new EggSyntaxError(
+        "Unexpected end of input, expected ')'",
+        pos.line,
+        pos.column
+      );
+    }
 
-    if (program[0] == ",") {
-      program = skipSpace(program.slice(1));
-    } else if (program[0] != ")") {
-      throw new SyntaxError("Expected ',' or ')'");
+    let arg = parseExpression(pos);
+    applyExpr.args.push(arg);
+    skipSpace(pos);
+
+    if (pos.peek() === ",") {
+      pos.advance(1);
+      skipSpace(pos);
+    } else if (pos.peek() !== ")") {
+      throw new EggSyntaxError("Expected ',' or ')'", pos.line, pos.column);
     }
   }
 
   // Skip closing parenthesis and check for chained applications: func()(args)
-  return parseApply(expr, program.slice(1));
+  pos.advance(1);
+  return parseApply(applyExpr, pos);
 }
 
 /**
@@ -82,11 +182,43 @@ function parseApply(expr, program) {
  * @returns {Object} - The Abstract Syntax Tree (AST) for the program
  */
 function parse(program) {
-  let { expr, rest } = parseExpression(program);
-  if (skipSpace(rest).length > 0) {
-    throw new SyntaxError("Unexpected text after program");
+  const pos = new SourcePosition(program);
+  const expr = parseExpression(pos);
+  skipSpace(pos);
+  if (pos.remaining().length > 0) {
+    throw new EggSyntaxError(
+      "Unexpected text after program",
+      pos.line,
+      pos.column
+    );
   }
   return expr;
 }
 
-module.exports = { parse, skipSpace, parseExpression, parseApply };
+// Legacy functions for backward compatibility
+function skipSpaceLegacy(string) {
+  let match = string.match(/^(\s|#.*)*/);
+  return string.slice(match[0].length);
+}
+
+function parseExpressionLegacy(program) {
+  const pos = new SourcePosition(program);
+  const expr = parseExpression(pos);
+  return { expr, rest: pos.remaining() };
+}
+
+function parseApplyLegacy(expr, program) {
+  const pos = new SourcePosition(program);
+  pos.pos = 0; // Start from beginning since we're given the remaining program
+  const result = parseApply(expr, pos);
+  return { expr: result, rest: pos.remaining() };
+}
+
+module.exports = {
+  parse,
+  skipSpace: skipSpaceLegacy,
+  parseExpression: parseExpressionLegacy,
+  parseApply: parseApplyLegacy,
+  EggSyntaxError,
+  SourcePosition,
+};
