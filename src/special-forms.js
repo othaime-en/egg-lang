@@ -142,6 +142,161 @@ specialForms.set = (args, scope, expr) => {
 };
 
 /**
+ * class(name, constructor, ...methods) - Class definition
+ * Creates a constructor function with prototype methods
+ */
+specialForms.class = (args, scope, expr) => {
+  if (args.length < 2) {
+    const pos =
+      expr && expr.line ? ` at line ${expr.line}, column ${expr.column}` : "";
+    throw new SyntaxError(
+      "class requires at least a name and constructor" + pos
+    );
+  }
+
+  if (args[0].type !== "word") {
+    const pos =
+      args[0] && args[0].line
+        ? ` at line ${args[0].line}, column ${args[0].column}`
+        : "";
+    throw new SyntaxError("Class name must be a word" + pos);
+  }
+
+  const className = args[0].name;
+  const constructorDef = args[1];
+  const methods = args.slice(2);
+
+  // Evaluate the constructor function
+  const constructor = evaluate(constructorDef, scope);
+  if (typeof constructor !== "function") {
+    const pos =
+      args[1] && args[1].line
+        ? ` at line ${args[1].line}, column ${args[1].column}`
+        : "";
+    throw new TypeError("Class constructor must be a function" + pos);
+  }
+
+  // Create the class constructor function
+  function ClassConstructor(...args) {
+    // Create instance object
+    const instance = {};
+
+    // Set up prototype chain
+    Object.setPrototypeOf(instance, ClassConstructor.prototype);
+
+    // Call constructor with instance as 'this' context
+    const result = constructor.call(instance, instance, ...args);
+
+    // Return the instance (constructor should modify the passed instance)
+    return instance;
+  }
+
+  // Add methods to prototype
+  methods.forEach((methodDef, index) => {
+    if (
+      methodDef.type !== "apply" ||
+      methodDef.operator.type !== "word" ||
+      methodDef.operator.name !== "method" ||
+      methodDef.args.length !== 2
+    ) {
+      const pos =
+        methodDef && methodDef.line
+          ? ` at line ${methodDef.line}, column ${methodDef.column}`
+          : "";
+      throw new SyntaxError(
+        "Class methods must be defined with method(name, function)" + pos
+      );
+    }
+
+    const methodName = evaluate(methodDef.args[0], scope);
+    const methodFunc = evaluate(methodDef.args[1], scope);
+
+    if (typeof methodName !== "string") {
+      throw new TypeError("Method name must be a string");
+    }
+    if (typeof methodFunc !== "function") {
+      throw new TypeError("Method must be a function");
+    }
+
+    // Wrap method to provide 'this' context
+    ClassConstructor.prototype[methodName] = function (...args) {
+      return methodFunc(this, ...args);
+    };
+  });
+
+  // Store in scope
+  scope[className] = ClassConstructor;
+  return ClassConstructor;
+};
+
+/**
+ * method(name, function) - Method definition helper
+ * Used inside class definitions
+ */
+specialForms.method = (args, scope, expr) => {
+  // This is just a marker - actual processing happens in class definition
+  const pos =
+    expr && expr.line ? ` at line ${expr.line}, column ${expr.column}` : "";
+  throw new SyntaxError(
+    "method() can only be used inside class definitions" + pos
+  );
+};
+
+/**
+ * new(constructor, ...args) - Object instantiation
+ * Creates new instance of a class
+ */
+specialForms.new = (args, scope, expr) => {
+  if (args.length < 1) {
+    const pos =
+      expr && expr.line ? ` at line ${expr.line}, column ${expr.column}` : "";
+    throw new SyntaxError("new requires a constructor function" + pos);
+  }
+
+  const constructor = evaluate(args[0], scope);
+  const constructorArgs = args.slice(1).map((arg) => evaluate(arg, scope));
+
+  if (typeof constructor !== "function") {
+    throw new TypeError("new() requires a constructor function");
+  }
+
+  return new constructor(...constructorArgs);
+};
+
+/**
+ * call(object, method, ...args) - Method call
+ * Calls a method on an object with proper 'this' binding
+ */
+specialForms.call = (args, scope, expr) => {
+  if (args.length < 2) {
+    const pos =
+      expr && expr.line ? ` at line ${expr.line}, column ${expr.column}` : "";
+    throw new SyntaxError(
+      "call requires at least object and method name" + pos
+    );
+  }
+
+  const obj = evaluate(args[0], scope);
+  const methodName = evaluate(args[1], scope);
+  const methodArgs = args.slice(2).map((arg) => evaluate(arg, scope));
+
+  if (typeof obj !== "object" || obj === null) {
+    throw new TypeError("call() requires an object as first argument");
+  }
+
+  if (typeof methodName !== "string") {
+    throw new TypeError("Method name must be a string");
+  }
+
+  const method = obj[methodName];
+  if (typeof method !== "function") {
+    throw new TypeError(`Method '${methodName}' is not a function`);
+  }
+
+  return method.apply(obj, methodArgs);
+};
+
+/**
  * Sets the evaluate function (used to avoid circular dependency)
  * @param {Function} evaluateFunction - The evaluate function
  */

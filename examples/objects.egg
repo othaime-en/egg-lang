@@ -1,0 +1,70 @@
+# Object examples in Egg
+
+do(
+  # Create a simple object
+  define(person, object(
+    "name", "Alice",
+    "age", 30,
+    "city", "New York"
+  )),
+  
+  print("Person object:"),
+  print(person),
+  
+  # Access object properties
+  print("Name:"),
+  print(get(person, "name")),
+  print("Age:"),
+  print(get(person, "age")),
+  
+  # Modify object properties  
+  setProperty(person, "age", 31),
+  print("Age after birthday:"),
+  print(get(person, "age")),
+  
+  # Add new property
+  setProperty(person, "profession", "Engineer"),
+  print("Profession:"),
+  print(get(person, "profession")),
+  
+  # Check if property exists
+  print("Has 'name' property:"),
+  print(hasProperty(person, "name")),
+  print("Has 'salary' property:"),
+  print(hasProperty(person, "salary")),
+  
+  # Get all keys and values
+  print("Object keys:"),
+  print(keys(person)),
+  print("Object values:"),
+  print(values(person)),
+
+  # Create a more complex object
+  define(car, object(
+    "make", "Toyota",
+    "model", "Camry", 
+    "year", 2023,
+    "mileage", 0
+  )),
+  
+  print("Car object:"),
+  print(car),
+  
+  # Simulate driving
+  define(drive, fun(car, miles,
+    do(
+      define(currentMileage, get(car, "mileage")),
+      setProperty(car, "mileage", +(currentMileage, miles)),
+      concat("Drove ", concat(miles, " miles"))
+    )
+  )),
+  
+  print(drive(car, 100)),
+  print("Car mileage:"),
+  print(get(car, "mileage")),
+  
+  print(drive(car, 250)),
+  print("Car mileage after more driving:"),
+  print(get(car, "mileage"))
+  
+)

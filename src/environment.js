@@ -264,6 +264,71 @@ topScope.forEach = (array, callback) => {
   return array; // Return array for chaining
 };
 
+// Object operations
+topScope.object = (...pairs) => {
+  if (pairs.length % 2 !== 0) {
+    throw new TypeError(
+      "object() requires an even number of arguments (key-value pairs)"
+    );
+  }
+
+  const obj = {};
+  for (let i = 0; i < pairs.length; i += 2) {
+    const key = pairs[i];
+    const value = pairs[i + 1];
+    if (typeof key !== "string") {
+      throw new TypeError("Object keys must be strings");
+    }
+    obj[key] = value;
+  }
+  return obj;
+};
+
+topScope.get = (obj, key) => {
+  if (typeof obj !== "object" || obj === null || Array.isArray(obj)) {
+    throw new TypeError("get() requires an object as first argument");
+  }
+  if (typeof key !== "string") {
+    throw new TypeError("get() requires a string key");
+  }
+  return obj[key];
+};
+
+topScope.setProperty = (obj, key, value) => {
+  if (typeof obj !== "object" || obj === null || Array.isArray(obj)) {
+    throw new TypeError("setProperty() requires an object as first argument");
+  }
+  if (typeof key !== "string") {
+    throw new TypeError("setProperty() requires a string key");
+  }
+  obj[key] = value;
+  return value;
+};
+
+topScope.hasProperty = (obj, key) => {
+  if (typeof obj !== "object" || obj === null || Array.isArray(obj)) {
+    throw new TypeError("hasProperty() requires an object as first argument");
+  }
+  if (typeof key !== "string") {
+    throw new TypeError("hasProperty() requires a string key");
+  }
+  return key in obj;
+};
+
+topScope.keys = (obj) => {
+  if (typeof obj !== "object" || obj === null || Array.isArray(obj)) {
+    throw new TypeError("keys() requires an object");
+  }
+  return Object.keys(obj);
+};
+
+topScope.values = (obj) => {
+  if (typeof obj !== "object" || obj === null || Array.isArray(obj)) {
+    throw new TypeError("values() requires an object");
+  }
+  return Object.values(obj);
+};
+
 // Additional utility functions
 topScope.type = (value) => {
   if (Array.isArray(value)) return "array";

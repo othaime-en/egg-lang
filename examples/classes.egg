@@ -1,0 +1,101 @@
+# Class examples in Egg
+
+do(
+  # Define a Person class
+  class(Person,
+    # Constructor function
+    fun(this, name, age,
+      do(
+        setProperty(this, "name", name),
+        setProperty(this, "age", age)
+      )
+    ),
+    # Methods
+    method("greet", fun(this,
+      concat("Hello, my name is ", get(this, "name"))
+    )),
+    method("getAge", fun(this,
+      get(this, "age")
+    )),
+    method("haveBirthday", fun(this,
+      do(
+        define(currentAge, get(this, "age")),
+        setProperty(this, "age", +(currentAge, 1)),
+        concat("Happy birthday! Now ", concat(get(this, "age"), " years old"))
+      )
+    ))
+  ),
+  
+  # Create instances
+  define(alice, new(Person, "Alice", 30)),
+  define(bob, new(Person, "Bob", 25)),
+  
+  print("Alice greeting:"),
+  print(call(alice, "greet")),
+  print("Bob greeting:"),
+  print(call(bob, "greet")),
+  
+  print("Alice's age:"),
+  print(call(alice, "getAge")),
+  
+  print("Alice's birthday:"),
+  print(call(alice, "haveBirthday")),
+  print("Alice's new age:"),
+  print(call(alice, "getAge")),
+  
+  # Define a BankAccount class
+  class(BankAccount,
+    fun(this, owner, initialBalance,
+      do(
+        setProperty(this, "owner", owner),
+        setProperty(this, "balance", initialBalance),
+        setProperty(this, "transactions", array())
+      )
+    ),
+    method("deposit", fun(this, amount,
+      do(
+        define(currentBalance, get(this, "balance")),
+        define(newBalance, +(currentBalance, amount)),
+        setProperty(this, "balance", newBalance),
+        push(get(this, "transactions"), concat("Deposit: $", amount)),
+        concat("Deposited $", concat(amount, concat(". New balance: $", newBalance)))
+      )
+    )),
+    method("withdraw", fun(this, amount,
+      do(
+        define(currentBalance, get(this, "balance")),
+        if(>=(currentBalance, amount),
+          do(
+            define(newBalance, -(currentBalance, amount)),
+            setProperty(this, "balance", newBalance),
+            push(get(this, "transactions"), concat("Withdrawal: $", amount)),
+            concat("Withdrew $", concat(amount, concat(". New balance: $", newBalance)))
+          ),
+          "Insufficient funds"
+        )
+      )
+    )),
+    method("getBalance", fun(this,
+      get(this, "balance")
+    )),
+    method("getTransactions", fun(this,
+      get(this, "transactions")
+    ))
+  ),
+  
+  # Create a bank account
+  define(account, new(BankAccount, "Alice", 1000)),
+  
+  print("Initial balance:"),
+  print(call(account, "getBalance")),
+  
+  print(call(account, "deposit", 500)),
+  print(call(account, "withdraw", 200)),
+  print(call(account, "withdraw", 2000)),  # Should fail
+  
+  print("Final balance:"),
+  print(call(account, "getBalance")),
+  
+  print("Transaction history:"),
+  print(call(account, "getTransactions"))
+)
